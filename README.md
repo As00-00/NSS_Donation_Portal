@@ -98,8 +98,8 @@ To access the Admin Panel, you first need an Admin account.
 
 ### 📂 Project Structure
 ```bash
+├──actions/            # Server Actions (Backend Logic) 
 ├── app/
-│   ├── actions/       # Server Actions (Backend Logic)
 │   ├── admin/         # Admin Dashboard Pages
 │   ├── api/           # API Routes (if any)
 │   ├── dashboard/     # User Dashboard Pages
