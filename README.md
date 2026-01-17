@@ -61,5 +61,29 @@ Follow these steps to run the project locally on your machine.
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/YOUR_USERNAME/nss-portal.git](https://github.com/YOUR_USERNAME/nss-portal.git)
+git clone [https://github.com/As00-00E/NSS_Donation_Portal.git](https://github.com/As00-00/NSS_Donation_portal.git)
 cd nss-portal
+```
+### 2. Install Dependencies
+```bash
+npm install
+```
+### 3. Configure Environment Variables
+Create a .env file in the root directory and add the following keys:
+```Code Snippet
+# Database Connection
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/nss_db
+
+# Security Secrets (Generate random strings for these)
+JWT_SECRET=your_super_secret_jwt_key
+ADMIN_SECRET_KEY=your_admin_onboarding_key
+
+# Razorpay Keys (Get these from Razorpay Dashboard)
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxx
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+```
+### 4. Run the Development Server
+```bash
+npm run dev
+```
+Open http://localhost:3000 in your browser.
