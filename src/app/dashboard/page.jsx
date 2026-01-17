@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { getUserDashboardData } from "@/actions/getDonations";
 import { redirect } from "next/navigation";
 import DashboardClient from "@/components/DashboardClient"; 

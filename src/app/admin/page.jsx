@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { getAdminDashboardData } from "@/actions/getAdminData";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
