@@ -1,26 +1,43 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import mongoose from "mongoose";
 
-const DonationSchema = new Schema(
+const DonationSchema = new mongoose.Schema(
   {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    amount: { type: Number, required: true },
-    currency:{
-        type:String,
-        default:"INR"
+    name: {
+      type: String,
+      required: false, 
+      default: "Anonymous"
     },
-    status: { 
-      type: String, 
-      enum: ["pending", "success", "failed"], 
-      default: "pending"
-    }, 
-    transactionId: { type: String },
-    paymentMethod: { type: String },
-},
-  
-  { timestamps: true },
-
+    email: {
+      type: String,
+      required: false,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    currency: {
+      type: String,
+      default: "INR",
+    },
+    status: {
+      type: String,
+      enum: ["pending", "success", "failed"],
+      default: "pending",
+    },
+    orderId: {
+      type: String,
+      required: true,
+    },
+    paymentId: {
+      type: String,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", 
+    },
+  },
+  { timestamps: true }
 );
 
 
-const Donation = models.Donation || model("Donation", DonationSchema);
-export default Donation;
+export default mongoose.models.Donation || mongoose.model("Donation", DonationSchema);

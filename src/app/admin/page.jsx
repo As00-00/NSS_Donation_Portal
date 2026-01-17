@@ -5,7 +5,6 @@ import { jwtVerify } from "jose";
 import AdminDashboardClient from "@/components/AdminDashboardClient";
 
 export default async function AdminDashboard() {
-  
   const data = await getAdminDashboardData();
 
   if (!data.success) {
@@ -15,21 +14,15 @@ export default async function AdminDashboard() {
 
   const cookieStore = await cookies();
   const token = cookieStore.get("session_token");
-  let adminName = "Admin";
-  
-  if (token) {
-      try {
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-        const { payload } = await jwtVerify(token.value, secret);
-      } catch (e) {}
-  }
+  let adminName = "Administrator";
 
-  const { stats, donations } = data;
+
 
   return (
     <AdminDashboardClient 
-       stats={stats} 
-       donations={donations} 
+       stats={data.stats} 
+       donations={data.donations} 
+       users={data.users} 
        adminName={adminName} 
     />
   );

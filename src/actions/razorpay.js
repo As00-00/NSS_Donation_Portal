@@ -3,9 +3,9 @@
 import Razorpay from "razorpay";
 import  connectDB  from "@/lib/db";
 import Donation from "@/models/donation";
+import User from "@/models/user"; 
 import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
-import crypto from "crypto";
+import { jwtVerify } from "jose"; 
 
 const instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -15,17 +15,33 @@ const instance = new Razorpay({
 export async function createRazorpayOrder(amount) {
   try {
     await connectDB();
-    
 
+    
     const cookieStore = await cookies();
     const token = cookieStore.get("session_token");
-    if (!token) return { success: false, message: "Unauthorized" };
+    
+    let donorName = "Anonymous";
+    let donorEmail = "anonymous@nss.org";
+    let userId = null;
 
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-    const { payload } = await jwtVerify(token.value, secret);
-    const userId = payload.userId;
+    if (token) {
+      try {
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const { payload } = await jwtVerify(token.value, secret);
+        
+      
+        const user = await User.findById(payload.userId);
+        if (user) {
+          donorName = user.name;
+          donorEmail = user.email;
+          userId = user._id;
+        }
+      } catch (e) {
+        console.log("User not logged in or invalid token");
+      }
+    }
 
-
+    
     const options = {
       amount: amount * 100, 
       currency: "INR",
@@ -34,61 +50,53 @@ export async function createRazorpayOrder(amount) {
 
     const order = await instance.orders.create(options);
 
-
+    
     const newDonation = new Donation({
-      userId: userId,
       amount: amount,
       currency: "INR",
-      status: "pending", 
-      paymentMethod: "Razorpay",
-      transactionId: order.id 
+      orderId: order.id,
+      status: "pending",
+      userId: userId,     
+      name: donorName,    
+      email: donorEmail   
     });
 
     await newDonation.save();
 
-    return { 
-      success: true, 
-      orderId: order.id, 
-      amount: order.amount, 
-      keyId: process.env.RAZORPAY_KEY_ID 
+    return {
+      success: true,
+      orderId: order.id,
+      amount: order.amount,
+      keyId: process.env.RAZORPAY_KEY_ID,
     };
-
   } catch (error) {
-    console.error("Razorpay Order Error:", error);
-    return { success: false, message: "Could not initiate payment" };
+    console.error("Razorpay Error:", error);
+    return { success: false, message: "Could not create order" };
   }
 }
 
-export async function verifyRazorpayPayment(data) {
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = data;
-
+export async function verifyRazorpayPayment(response) {
+  const crypto = require("crypto");
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
 
   const body = razorpay_order_id + "|" + razorpay_payment_id;
+
   const expectedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
     .update(body.toString())
     .digest("hex");
 
-  
   if (expectedSignature === razorpay_signature) {
-    
-    
     await connectDB();
-    await Donation.findOneAndUpdate(
-      { transactionId: razorpay_order_id },
-      { 
-        status: "success", 
-        paymentMethod: "Razorpay" 
-      }
-    );
-    return { success: true };
+    
 
-  } else {
-    await connectToDB();
     await Donation.findOneAndUpdate(
-      { transactionId: razorpay_order_id },
-      { status: "failed" }
+      { orderId: razorpay_order_id },
+      { status: "success", paymentId: razorpay_payment_id }
     );
-    return { success: false, message: "Payment verification failed" };
+
+    return { success: true };
+  } else {
+    return { success: false };
   }
 }
