@@ -61,7 +61,7 @@ Follow these steps to run the project locally on your machine.
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/As00-00E/NSS_Donation_Portal.git](https://github.com/As00-00/NSS_Donation_portal.git)
+git clone [https://github.com/As00-00/NSS_Donation_Portal.git](https://github.com/As00-00/NSS_Donation_portal.git)
 cd nss-portal
 ```
 ### 2. Install Dependencies
@@ -77,6 +77,7 @@ MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/nss_db
 # Security Secrets (Generate random strings for these)
 JWT_SECRET=your_super_secret_jwt_key
 ADMIN_SECRET_KEY=your_admin_onboarding_key
+CREATE_ADMIN_SECRET_KEY=your_create_admin_secret_key
 
 # Razorpay Keys (Get these from Razorpay Dashboard)
 RAZORPAY_KEY_ID=rzp_test_xxxxxxxx
@@ -87,3 +88,38 @@ RAZORPAY_KEY_SECRET=your_razorpay_secret
 npm run dev
 ```
 Open http://localhost:3000 in your browser.
+
+### 🔐 Admin Access
+To access the Admin Panel, you first need an Admin account.
+
+1. First Run: You can manually change a user's role to admin in your MongoDB database.
+
+2. Onboarding: Once logged in as an Admin, use the "Onboard Admin" tab to create new admins using the ADMIN_SECRET_KEY.
+
+### 📂 Project Structure
+```bash
+├── app/
+│   ├── actions/       # Server Actions (Backend Logic)
+│   ├── admin/         # Admin Dashboard Pages
+│   ├── api/           # API Routes (if any)
+│   ├── dashboard/     # User Dashboard Pages
+│   ├── donate/        # Payment Page
+│   └── (auth)/        # Login & Register Routes
+├── components/        # Reusable UI Components
+├── lib/               # Database Connection Helper
+├── models/            # Mongoose Database Models
+└── public/            # Static Assets (Images, Logos)
+```
+
+### 🤝 Contribution
+Contributions are welcome!
+
+1. Fork the repository.
+
+2. Create a new branch (git checkout -b feature-branch).
+
+3. Commit your changes.
+
+4. Push to the branch and open a Pull Request.
+
+# Made with ❤️ by Aryan Sankhla for NSS India.
